@@ -105,7 +105,7 @@ def TVV_loss(pred, img, kappa=0.1):
 
     dy2 = pred[:,:, 2:] - 2 * pred[:,:,1:-1] + pred[:,:,:-2]
     dx2 = pred[:,:,:, 2:] - 2 * pred[:,:,:,1:-1] + pred[:,:,:,:-2]
-    return (dx2*gx).abs() + (dy2*gy).pow(2).mean()
+    return (dx2*gx).abs().mean() + (dy2*gy).abs().mean()
 
 
 @multiscale

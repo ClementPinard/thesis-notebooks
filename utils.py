@@ -125,7 +125,7 @@ def euler2mat(angle):
     return rotMat
 
 
-def inverse_warp(img, depth, pose_matrix, intrinsics, intrinsics_inv):
+def inverse_warp(img, depth, pose_matrix, intrinsics):
     """
     Inverse warp a source image to the target image plane.
 
@@ -139,14 +139,12 @@ def inverse_warp(img, depth, pose_matrix, intrinsics, intrinsics_inv):
         Source image warped to the target image plane
     """
 
-    assert(intrinsics_inv.size() == intrinsics.size())
-
     batch_size, _, img_height, img_width = img.size()
 
     cam_coords = pixel2cam(depth)  # [B,3,H,W]
 
     # Get projection matrix for tgt camera frame to source pixel frame
-    rot_cam_to_src_pixel = intrinsics @ pose_matrix[:,:,:-1] @ intrinsics_inv  # [B, 3, 3]
+    rot_cam_to_src_pixel = intrinsics @ pose_matrix[:,:,:-1] @ intrinsics.inverse()  # [B, 3, 3]
     trans_cam_to_src_pixel = intrinsics @ pose_matrix[:,:,-1:]  # [B, 3, 1]
 
     src_pixel_coords = cam2pixel(cam_coords, rot_cam_to_src_pixel, trans_cam_to_src_pixel)  # [B,H,W,2]
